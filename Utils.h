@@ -5,6 +5,7 @@
 #include <map>
 #include <chrono>
 #include <thread>
+#include <vector>
 
 using namespace std;
 
@@ -14,6 +15,8 @@ const string AVA = "\033[35m";
 const string RESET = "\033[0m";
 const string TIME = "\033[93m";
 const string INVALID = "\033[31m";
+const string NPC = "\033[0m";
+const string ITEM = "\033[33m";
 
 
 inline string toLowerStr(string s) {
@@ -28,47 +31,32 @@ inline void clearInputBuffer() {
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
 
-extern map<string, bool> playerInventory;
-
-
-inline void initInventory() {
-    playerInventory["Cassette"] = false;
-    playerInventory["Key_Attic"] = false;
-    playerInventory["Key_Basement"] = false;
-    playerInventory["Note_1"] = false;
-}
-
-inline void showInventory() {
-    cout << "\n--- CURRENT INVENTORY ---" << endl;
-    bool empty = true;
-
-    
-    for (auto const& pair : playerInventory) {
-        if (pair.second) { 
-            cout << "- " << pair.first << endl;
-            empty = false;
-        }
-    }
-
-    if (empty) {
-        cout << "(Your pockets are empty)" << endl;
-    }
-    cout << "-------------------------\n" << endl;
-}
 
 
 inline void continue_program() {
-    cout << "Press Enter to Continue..." << endl;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    cin.get();
+    std::cout << "Press Enter to Continue..." << std::endl;
+
+    // Check if there is already a newline or other characters in the buffer
+    if (std::cin.rdbuf()->in_avail() > 0) {
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+
+    // Now wait for the user's fresh Enter press
+    std::cin.get();
 }
 
-inline void dialogue(string text, string color = RESET, int speed = 100) {
+inline void dialogue(string text, string color = RESET, int speed = 50) {
     cout << color; 
     for (char c : text) {
         cout << c << flush; 
         this_thread::sleep_for(chrono::milliseconds(speed));
     }
     cout << RESET << endl; 
+}
+
+// Helper function to add vertical spacing
+inline void clearScreen() {
+    // Prints 10 newline characters
+    std::cout << std::string(30, '\n');
 }
 
